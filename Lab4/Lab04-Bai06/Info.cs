@@ -97,7 +97,7 @@ namespace Lab04_Bai06
             //    textBox1.Text += Environment.NewLine;
             //}
             if (data.ContainsKey("id"))
-                textBox1.Text = $"" +
+                DetailTextBox.Text = $"" +
                     $"Username : {data["username"]}{(((string)data["is_superuser"] == "True") ? " (Super User)" : "")} ({(((string)data["is_active"] == "True") ? "Active" : "Unactive")})\r\n" +
                     $"ID : {data["id"]}\r\nEmail : {data["email"]} ({(((string)data["email_verified"] == "False") ? "Not " : "")}Verified)\r\n" +
                     $"Phone : {data["phone"]} ({(((string)data["phone_verified"] == "False") ? "Not " : "")}Verified)\r\n" +
