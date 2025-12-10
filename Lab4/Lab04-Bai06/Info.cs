@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Lab04_Bai06
 {
@@ -106,6 +107,16 @@ namespace Lab04_Bai06
                     $"Birthday : {data["birthday"]}\r\n" +
                     $"Language : {((string)data["language"]).ToUpper()[0]}{((string)data["language"]).Substring(1)}\r\n";
             //}
+            else
+            {
+                foreach (var property in data)
+                {
+                    string title = property.Key;
+                    JToken content = property.Value;
+                    DetailTextBox.Text += $"{title.ToUpper()[0]}{title.Substring(1)} : {content}";
+                    DetailTextBox.Text += Environment.NewLine;
+                }
+            }
         }
 
         private void Ok_Click(object sender, EventArgs e)
