@@ -13,6 +13,7 @@ namespace Lab04_Bai05
         public MainForm()
         {
             InitializeComponent();
+            txtPassword.PasswordChar = '*';
             txtURL.Text = "https://nt106.uitiot.vn/auth/token";
             txtUsername.Text = "phatpt";
             txtPassword.Text = "123456";

@@ -6,6 +6,7 @@ public partial class FormSignUp : Form
     {
         InitializeComponent();
         // Thêm ngôn ngữ
+        txtPassword.PasswordChar = '*';
         cbbLanguage.Items.Add("vi");
         cbbLanguage.Items.Add("en");
         cbbLanguage.SelectedIndex = 0;

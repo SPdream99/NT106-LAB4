@@ -5,6 +5,7 @@ public partial class FormLogin : Form
     public FormLogin()
     {
         InitializeComponent();
+        txtPassword.PasswordChar = '*';
     }
 
     // btn đăng nhập
