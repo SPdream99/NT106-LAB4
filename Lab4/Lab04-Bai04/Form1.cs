@@ -1,4 +1,7 @@
 ﻿using System.Text.Json;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Net;
 
 namespace Lab04_Bai04;
 
@@ -86,10 +89,136 @@ public partial class Form1 : Form
         File.WriteAllText(bookingsFile, json);
     }
 
-    private void btnLoadPhim_Click(object sender, EventArgs e)
+    private async Task DownloadJsonAsync(string url, string localPath)
+    {
+        using var http = new HttpClient();
+        var json = await http.GetStringAsync(url);
+        await File.WriteAllTextAsync(localPath, json);
+    }
+
+    private class ExternalMovie
+    {
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public string Poster { get; set; }
+    }
+
+    private async Task<List<ExternalMovie>> CrawlMoviesAsync()
+    {
+        var http = new HttpClient();
+        var html = await http.GetStringAsync("https://betacinemas.vn/phim.htm");
+        var list = new List<ExternalMovie>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        int i = 0;
+        while (true)
+        {
+            int card = html.IndexOf("class=\"product-item", i, StringComparison.OrdinalIgnoreCase);
+            if (card < 0) break;
+
+            int posterClass = html.IndexOf("class=\"img-responsive border-radius-20\"", card, StringComparison.OrdinalIgnoreCase);
+            string poster = "";
+            if (posterClass > -1)
+            {
+                int src = html.IndexOf("src=\"", posterClass, StringComparison.OrdinalIgnoreCase);
+                if (src > -1)
+                {
+                    src += 5;
+                    int srcEnd = html.IndexOf("\"", src, StringComparison.Ordinal);
+                    if (srcEnd > src) poster = html.Substring(src, srcEnd - src).Trim();
+                }
+            }
+
+            int h3 = html.IndexOf("<h3", card, StringComparison.OrdinalIgnoreCase);
+            string url = "";
+            string title = "";
+            if (h3 > -1)
+            {
+                int href = html.IndexOf("href=\"", h3, StringComparison.OrdinalIgnoreCase);
+                if (href > -1)
+                {
+                    href += 6;
+                    int hrefEnd = html.IndexOf("\"", href, StringComparison.Ordinal);
+                    if (hrefEnd > href) url = html.Substring(href, hrefEnd - href).Trim();
+
+                    int aStart = html.IndexOf(">", hrefEnd, StringComparison.Ordinal);
+                    int aEnd = aStart > -1 ? html.IndexOf("</a>", aStart, StringComparison.OrdinalIgnoreCase) : -1;
+                    if (aStart > -1 && aEnd > aStart)
+                    {
+                        title = WebUtility.HtmlDecode(html.Substring(aStart + 1, aEnd - aStart - 1).Trim());
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(title) && seen.Add(title))
+            {
+                list.Add(new ExternalMovie { Name = title, Url = url, Poster = poster });
+            }
+
+            i = h3 > -1 ? h3 + 4 : card + 1;
+        }
+
+        return list;
+    }
+
+    private static string MakeAbsoluteUrl(string baseUrl, string path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return "";
+        if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return path;
+        if (!baseUrl.EndsWith("/")) baseUrl += "/";
+        if (path.StartsWith("/")) path = path.Substring(1);
+        return baseUrl + path;
+    }
+
+
+
+    private async void btnLoadPhim_Click(object sender, EventArgs e)
     {
         flowLayoutPanel1.Controls.Clear();
-        progressBar1.Value = 20;
+        progressBar1.Value = 10;
+
+        List<ExternalMovie> extMovies = null;
+        var localJson = "movies.json";
+
+        if (File.Exists(localJson))
+        {
+            try
+            {
+                var json = await File.ReadAllTextAsync(localJson);
+                extMovies = JsonSerializer.Deserialize<List<ExternalMovie>>(json) ?? new List<ExternalMovie>();
+            }
+            catch
+            {
+                extMovies = new List<ExternalMovie>();
+            }
+        }
+
+        if (extMovies == null || extMovies.Count == 0)
+        {
+            extMovies = await CrawlMoviesAsync();
+            try
+            {
+                var json = JsonSerializer.Serialize(extMovies, new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(localJson, json);
+            }
+            catch { }
+        }
+
+        movies.Clear();
+        foreach (var m in extMovies)
+        {
+            var absoluteUrl = MakeAbsoluteUrl("https://betacinemas.vn", m.Url);
+            movies.Add(new Movie
+            {
+                Name = m.Name,
+                Price = 100000,
+                Rooms = new[] { 1, 2, 3 },
+                Url = absoluteUrl,
+                Poster = m.Poster
+            });
+        }
+
+        progressBar1.Value = 60;
 
         foreach (var mv in movies)
             AddMovieItem(mv);
