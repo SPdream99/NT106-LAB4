@@ -42,6 +42,8 @@ namespace Lab04_Bai05
 
             if (result.Success)
             {
+                lstView.Items.Add("Token Type: " + result.TokenType);
+                lstView.Items.Add("Access Token: " + result.AccessToken);
                 lstView.Items.Add("Login success");
                 try
                 {
