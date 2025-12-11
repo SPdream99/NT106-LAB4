@@ -1,70 +1,62 @@
-﻿using Newtonsoft.Json;
+﻿namespace Lab04_Bai07;
 
-
-namespace Lab04_Bai07
+public partial class FormLogin : Form
 {
-    public partial class FormLogin : Form
+    public FormLogin()
     {
-        public FormLogin()
+        InitializeComponent();
+    }
+
+    // btn đăng nhập
+    private async void BtnDangNhap_Click(object sender, EventArgs e)
+    {
+        var username = txtUsername.Text.Trim();
+        var password = txtPassword.Text.Trim();
+
+        if (username == "" || password == "")
         {
-            InitializeComponent();
-           
-
-
+            MessageBox.Show("Vui lòng nhập Username và Password!");
+            return;
         }
 
-        // btn đăng nhập
-        private async void BtnDangNhap_Click(object sender, EventArgs e)
+        try
         {
-            string username = txtUsername.Text.Trim();
-            string password = txtPassword.Text.Trim();
+            var api = new ApiClient();
 
-            if (username == "" || password == "")
+            var body = new
             {
-                MessageBox.Show("Vui lòng nhập Username và Password!");
-                return;
-            }
+                username, password
+            };
 
-            try
+            var form = new Dictionary<string, string>
             {
-                var api = new ApiClient();
+                { "username", username },
+                { "password", password }
+            };
 
-                var body = new
-                {
-                    username = username,
-                    password = password
-                };
+            var res = await api.PostFormAsync<LoginResponse>("auth/token", form);
 
-                var form = new Dictionary<string, string>
-{
-    { "username", username },
-    { "password", password }
-};
+            ApiClient.Token = res.access_token; // Lưu token để dùng API sau này
+            ApiClient.CurrentUsername = username;
 
-                var res = await api.PostFormAsync<LoginResponse>("auth/token", form);
+            MessageBox.Show("Đăng nhập thành công!");
 
-                ApiClient.Token = res.access_token;   // Lưu token để dùng API sau này
-                ApiClient.CurrentUsername = username;
-
-                MessageBox.Show("Đăng nhập thành công!");
-
-                // mở FormMain
-                FormMain main = new FormMain(ApiClient.CurrentUsername);
-                main.Show();
-                this.Hide();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Đăng nhập thất bại!\n" + ex.Message);
-            }
+            // mở FormMain
+            var main = new FormMain(ApiClient.CurrentUsername);
+            main.Show();
+            Hide();
         }
-
-        // ==== BUTTON ĐĂNG KÝ ====
-        private void BtnDangKy_Click(object sender, EventArgs e)
+        catch (Exception ex)
         {
-            FormSignUp f = new FormSignUp();
-            f.Show();
-            this.Hide();
+            MessageBox.Show("Đăng nhập thất bại!\n" + ex.Message);
         }
+    }
+
+    // ==== BUTTON ĐĂNG KÝ ====
+    private void BtnDangKy_Click(object sender, EventArgs e)
+    {
+        var f = new FormSignUp();
+        f.Show();
+        Hide();
     }
 }

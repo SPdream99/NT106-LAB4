@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace Lab04_Bai05
@@ -26,14 +17,13 @@ namespace Lab04_Bai05
                 { new StringContent(password), "password" }
             };
             var response = await _client.PostAsync(url, form);
-            string json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync();
 
             try
             {
-                JObject doc = JObject.Parse(json);
+                var doc = JObject.Parse(json);
 
                 if (response.IsSuccessStatusCode)
-                {
                     return (
                         true,
                         doc["token_type"].ToString(),
@@ -41,12 +31,9 @@ namespace Lab04_Bai05
                         null,
                         json
                     );
-                }
-                else
-                {
-                    string detail = doc["detail"].ToString();
-                    return (false, null, null, detail, null);
-                }
+
+                var detail = doc["detail"].ToString();
+                return (false, null, null, detail, null);
             }
             catch
             {

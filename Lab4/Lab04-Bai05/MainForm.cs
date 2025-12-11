@@ -1,22 +1,12 @@
-using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace Lab04_Bai05
 {
     public partial class MainForm : Form
     {
-        private ApiService api = new ApiService();
+        private readonly ApiService api = new ApiService();
 
         private Process proc;
 
@@ -32,9 +22,9 @@ namespace Lab04_Bai05
         {
             lstView.Items.Clear();
 
-            string url = txtURL.Text;
-            string username = txtUsername.Text;
-            string password = txtPassword.Text;
+            var url = txtURL.Text;
+            var username = txtUsername.Text;
+            var password = txtPassword.Text;
 
             lstView.Items.Add("Logging in...");
 
@@ -47,7 +37,7 @@ namespace Lab04_Bai05
                 lstView.Items.Add("Login success");
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    var startInfo = new ProcessStartInfo();
 
                     startInfo.FileName = "..\\..\\..\\Lab04-Bai06\\bin\\Debug\\Lab04-Bai06.exe";
                     startInfo.Arguments = $"-TokenType \"{result.TokenType}\" -AccessToken {result.AccessToken}";
@@ -56,11 +46,11 @@ namespace Lab04_Bai05
                         proc.WaitForExit();
                         proc = null;
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error opening program: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error opening program: {ex.Message}", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
             else
@@ -69,7 +59,7 @@ namespace Lab04_Bai05
                 lstView.Items.Add("Detail: " + result.Detail);
                 try
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    var startInfo = new ProcessStartInfo();
 
                     startInfo.FileName = "..\\..\\..\\Lab04-Bai06\\bin\\Debug\\Lab04-Bai06.exe";
                     using (proc = Process.Start(startInfo))
@@ -77,11 +67,11 @@ namespace Lab04_Bai05
                         proc.WaitForExit();
                         proc = null;
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error opening program: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"Error opening program: {ex.Message}", "Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                 }
             }
         }

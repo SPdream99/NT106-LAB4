@@ -1,9 +1,9 @@
 <Solution>
-  <Project Path="Lab02-Bai02/Lab04-Bai02.csproj" Id="3adc19a7-fb74-45fe-a9c1-c4c39f3ae008" />
-  <Project Path="Lab04-Bai03/Lab04-Bai03.csproj" Id="9957e7be-a3d1-43bc-9c70-73d2c3d39158" />
-  <Project Path="Lab04-Bai04/Lab04-Bai04.csproj" Id="66e5dabb-9a7b-4200-9ef7-2e1cd225b3ad" />
-  <Project Path="Lab04-Bai05/Lab04-Bai05.csproj" Id="1be6468d-afe2-4731-a51b-f0290db931bf" />
-  <Project Path="Lab04-Bai06/Lab04-Bai06.csproj" Id="e3a0cec5-29ec-466c-85c6-686c9fb8a94f" />
-  <Project Path="Lab04-Bai07/Lab04-Bai07.csproj" Id="0b5be9e9-11b1-4976-acef-8b5298796c8d" />
-  <Project Path="Lab04-Bai1/Lab04-Bai01.csproj" Id="14f5a454-7d85-4c3f-a668-e7a619782c99" />
+    <Project Path="Lab02-Bai02/Lab04-Bai02.csproj" Id="3adc19a7-fb74-45fe-a9c1-c4c39f3ae008"/>
+    <Project Path="Lab04-Bai03/Lab04-Bai03.csproj" Id="9957e7be-a3d1-43bc-9c70-73d2c3d39158"/>
+    <Project Path="Lab04-Bai04/Lab04-Bai04.csproj" Id="66e5dabb-9a7b-4200-9ef7-2e1cd225b3ad"/>
+    <Project Path="Lab04-Bai05/Lab04-Bai05.csproj" Id="1be6468d-afe2-4731-a51b-f0290db931bf"/>
+    <Project Path="Lab04-Bai06/Lab04-Bai06.csproj" Id="e3a0cec5-29ec-466c-85c6-686c9fb8a94f"/>
+    <Project Path="Lab04-Bai07/Lab04-Bai07.csproj" Id="0b5be9e9-11b1-4976-acef-8b5298796c8d"/>
+    <Project Path="Lab04-Bai1/Lab04-Bai01.csproj" Id="14f5a454-7d85-4c3f-a668-e7a619782c99"/>
 </Solution>

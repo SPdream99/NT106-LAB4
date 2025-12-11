@@ -1,16 +1,15 @@
-﻿using Newtonsoft.Json;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
+using Newtonsoft.Json;
 
 public class ApiClient
 {
-    private readonly HttpClient _client;
+    private const string BASE_URL = "https://nt106.uitiot.vn/";
 
     // Lưu token sau khi đăng nhập
     public static string Token = "";
     public static string CurrentUsername = "";
-
-    private const string BASE_URL = "https://nt106.uitiot.vn/"; 
+    private readonly HttpClient _client;
 
     public ApiClient()
     {
@@ -24,10 +23,8 @@ public class ApiClient
     public void ApplyToken()
     {
         if (!string.IsNullOrEmpty(Token))
-        {
             _client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", Token);
-        }
     }
 
     //Post
@@ -86,9 +83,4 @@ public class ApiClient
         if (!res.IsSuccessStatusCode)
             throw new Exception(body);
     }
-
-
-
-
-
 }

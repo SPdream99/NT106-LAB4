@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlAgilityPack;
 
 namespace Lab4_WebBrowser
 {
     public partial class WebBrowser : Form
-    {   // Khai báo đối tượng WebBrowser
-        System.Windows.Forms.WebBrowser webBrowser;
+    {
         // Danh sách các liên kết đã truy cập
-        List<string> links = new List<string>();
+        private readonly List<string> links = new List<string>();
+
         // Số lượng liên kết đã truy cập
-        int countlinks = 0;
+        private int countlinks; // Khai báo đối tượng WebBrowser
+        private System.Windows.Forms.WebBrowser webBrowser;
+
         public WebBrowser()
         {
             InitializeComponent();
@@ -58,14 +54,12 @@ namespace Lab4_WebBrowser
                 pnlBrowser.Controls.Add(webBrowser);
             }
 
-            string address = tbAddress.Text?.Trim();
+            var address = tbAddress.Text?.Trim();
             if (!string.IsNullOrEmpty(address))
             {
                 // Nếu người dùng không nhập schema, thêm http:// mặc định
-                if (!address.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !address.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-                {
-                    address = "http://" + address;
-                }
+                if (!address.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                    !address.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) address = "http://" + address;
 
                 try
                 {
@@ -83,13 +77,14 @@ namespace Lab4_WebBrowser
 
         private void btnDowHTML_Click(object sender, EventArgs e)
         {
-            string url = tbAddress.Text?.Trim();
-            string folderPath = tbPath.Text?.Trim();
+            var url = tbAddress.Text?.Trim();
+            var folderPath = tbPath.Text?.Trim();
             if (string.IsNullOrEmpty(url))
             {
                 MessageBox.Show("Please enter a URL.");
                 return;
             }
+
             if (string.IsNullOrEmpty(folderPath))
             {
                 MessageBox.Show("Please enter a folder path to save files.");
@@ -113,13 +108,14 @@ namespace Lab4_WebBrowser
         // Handler to download only resources (images, scripts, styles)
         private void btnDownResources_Click(object sender, EventArgs e)
         {
-            string url = tbAddress.Text?.Trim();
-            string folderPath = tbPath.Text?.Trim();
+            var url = tbAddress.Text?.Trim();
+            var folderPath = tbPath.Text?.Trim();
             if (string.IsNullOrEmpty(url))
             {
                 MessageBox.Show("Please enter a URL.");
                 return;
             }
+
             if (string.IsNullOrEmpty(folderPath))
             {
                 MessageBox.Show("Please enter a folder path to save files.");
@@ -129,14 +125,12 @@ namespace Lab4_WebBrowser
             try
             {
                 Directory.CreateDirectory(folderPath);
-                if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-                {
-                    url = "http://" + url;
-                }
+                if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                    !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) url = "http://" + url;
 
-                HtmlWeb web = new HtmlWeb();
-                HtmlAgilityPack.HtmlDocument document = web.Load(url);
-                Uri baseUri = new Uri(url);
+                var web = new HtmlWeb();
+                var document = web.Load(url);
+                var baseUri = new Uri(url);
                 DownloadSource(document.DocumentNode, folderPath, baseUri);
                 MessageBox.Show("Resources downloaded.");
             }
@@ -149,7 +143,6 @@ namespace Lab4_WebBrowser
         private void btnReload_Click(object sender, EventArgs e)
         {
             if (webBrowser != null)
-            {
                 try
                 {
                     webBrowser.Refresh();
@@ -158,7 +151,6 @@ namespace Lab4_WebBrowser
                 {
                     MessageBox.Show("Reload failed: " + ex.Message);
                 }
-            }
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -167,42 +159,31 @@ namespace Lab4_WebBrowser
             {
                 dlg.Description = "Select folder to save downloaded files";
                 dlg.ShowNewFolderButton = true;
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-                    tbPath.Text = dlg.SelectedPath;
-                }
+                if (dlg.ShowDialog() == DialogResult.OK) tbPath.Text = dlg.SelectedPath;
             }
         }
 
         private void DownloadWebsiteSource(string url, string folderPath)
         {
             // Đảm bảo URL có schema
-            if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            {
-                url = "http://" + url;
-            }
+            if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) url = "http://" + url;
 
-            HtmlWeb web = new HtmlWeb();
-            HtmlAgilityPack.HtmlDocument document = web.Load(url);
+            var web = new HtmlWeb();
+            var document = web.Load(url);
 
             // Lưu trữ nguồn (source) của trang web
-            string source = document.DocumentNode.OuterHtml;
+            var source = document.DocumentNode.OuterHtml;
 
             // Lấy tên tệp tin từ URL (tạo tên hợp lệ)
-            Uri baseUri = new Uri(url);
-            string fileName = baseUri.Host + baseUri.AbsolutePath.Replace('/', '_');
-            if (string.IsNullOrEmpty(Path.GetFileName(fileName)))
-            {
-                fileName = baseUri.Host + "_index";
-            }
+            var baseUri = new Uri(url);
+            var fileName = baseUri.Host + baseUri.AbsolutePath.Replace('/', '_');
+            if (string.IsNullOrEmpty(Path.GetFileName(fileName))) fileName = baseUri.Host + "_index";
             // Loại bỏ ký tự không hợp lệ
-            foreach (char c in Path.GetInvalidFileNameChars())
-            {
-                fileName = fileName.Replace(c, '_');
-            }
+            foreach (var c in Path.GetInvalidFileNameChars()) fileName = fileName.Replace(c, '_');
 
             // Kết hợp đường dẫn thư mục và tên tệp tin
-            string filePath = Path.Combine(folderPath, fileName + ".html");
+            var filePath = Path.Combine(folderPath, fileName + ".html");
             File.WriteAllText(filePath, source);
 
             // Download các hình ảnh và file liên quan
@@ -210,55 +191,48 @@ namespace Lab4_WebBrowser
         }
 
 
-        void DownloadSource(HtmlAgilityPack.HtmlNode node, string folderPath, Uri baseUri)
+        private void DownloadSource(HtmlNode node, string folderPath, Uri baseUri)
         {
-            if (node.NodeType == HtmlAgilityPack.HtmlNodeType.Element)
-            {
+            if (node.NodeType == HtmlNodeType.Element)
                 // Kiểm tra các thẻ HTML img, link và script
                 if (node.Name == "img" || node.Name == "link" || node.Name == "script")
                 {
                     // Lấy thuộc tính src hoặc href của thẻ
-                    string sourceUrl = node.GetAttributeValue("src", null) ?? node.GetAttributeValue("href", null);
+                    var sourceUrl = node.GetAttributeValue("src", null) ?? node.GetAttributeValue("href", null);
 
                     if (!string.IsNullOrEmpty(sourceUrl))
-                    {
                         try
                         {
                             // Chuyển URL tương đối thành URL tuyệt đối
                             Uri resourceUri = null;
-                            if (Uri.TryCreate(sourceUrl, UriKind.Absolute, out resourceUri) == false)
-                            {
+                            if (!Uri.TryCreate(sourceUrl, UriKind.Absolute, out resourceUri))
                                 // relative
                                 resourceUri = new Uri(baseUri, sourceUrl);
-                            }
 
                             // Tạo đường dẫn lưu trữ cho tệp tin
-                            string fileName = Path.GetFileName(resourceUri.LocalPath);
+                            var fileName = Path.GetFileName(resourceUri.LocalPath);
                             if (string.IsNullOrEmpty(fileName))
-                            {
                                 // nếu không có tên tệp, dùng host + hash
-                                fileName = resourceUri.Host + "_" + Math.Abs(resourceUri.GetHashCode()).ToString();
-                            }
+                                fileName = resourceUri.Host + "_" + Math.Abs(resourceUri.GetHashCode());
 
                             // Loại bỏ ký tự không hợp lệ
-                            foreach (char c in Path.GetInvalidFileNameChars())
-                            {
-                                fileName = fileName.Replace(c, '_');
-                            }
+                            foreach (var c in Path.GetInvalidFileNameChars()) fileName = fileName.Replace(c, '_');
 
-                            string filePath = Path.Combine(folderPath, fileName);
+                            var filePath = Path.Combine(folderPath, fileName);
 
                             // Nếu file đã tồn tại, thêm số để tránh ghi đè
-                            int copyIndex = 1;
-                            string originalFilePath = filePath;
+                            var copyIndex = 1;
+                            var originalFilePath = filePath;
                             while (File.Exists(filePath))
                             {
-                                filePath = Path.Combine(folderPath, Path.GetFileNameWithoutExtension(originalFilePath) + "_" + copyIndex + Path.GetExtension(originalFilePath));
+                                filePath = Path.Combine(folderPath,
+                                    Path.GetFileNameWithoutExtension(originalFilePath) + "_" + copyIndex +
+                                    Path.GetExtension(originalFilePath));
                                 copyIndex++;
                             }
 
                             // Tải và lưu tệp tin
-                            using (WebClient client = new WebClient())
+                            using (var client = new WebClient())
                             {
                                 client.DownloadFile(resourceUri.AbsoluteUri, filePath);
                             }
@@ -267,18 +241,14 @@ namespace Lab4_WebBrowser
                         {
                             // Bỏ qua các lỗi tải về (đường dẫn không hợp lệ, lỗi mạng,...)
                         }
-                    }
                 }
-            }
-            foreach (HtmlAgilityPack.HtmlNode childNode in node.ChildNodes)
-            {
-                DownloadSource(childNode, folderPath, baseUri);
-            }
+
+            foreach (var childNode in node.ChildNodes) DownloadSource(childNode, folderPath, baseUri);
         }
 
         private void btnViewSource_Click(object sender, EventArgs e)
         {
-            string url = tbAddress.Text?.Trim();
+            var url = tbAddress.Text?.Trim();
             if (string.IsNullOrEmpty(url))
             {
                 MessageBox.Show("Please enter a URL.");
@@ -288,12 +258,12 @@ namespace Lab4_WebBrowser
             try
             {
                 // Tải nguồn của trang web
-                HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
-                HtmlAgilityPack.HtmlDocument document = web.Load(url);
+                var web = new HtmlWeb();
+                var document = web.Load(url);
                 // Lưu trữ nguồn của trang web vào biến source
-                string source = document.DocumentNode.OuterHtml;
+                var source = document.DocumentNode.OuterHtml;
                 // Hiển thị nguồn trong một cửa sổ Resource
-                using (Resource viewSourceForm = new Resource())
+                using (var viewSourceForm = new Resource())
                 {
                     viewSourceForm.SetSource(source);
                     viewSourceForm.ShowDialog();
