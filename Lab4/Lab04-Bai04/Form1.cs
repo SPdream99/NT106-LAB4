@@ -69,7 +69,7 @@ namespace Lab04_Bai04
             LoadBookings();
 
             btnLoadPhim.Click += btnLoadPhim_Click;
-            btnDatVe.Click += btnDatVe_Click;
+            
 
             // gán event ghế
             foreach (var btn in panel3.Controls.OfType<Button>())
@@ -272,7 +272,7 @@ namespace Lab04_Bai04
 
             MessageBox.Show(msg, "ĐẶT VÉ THÀNH CÔNG");
 
-            ResetSeatUI();
+           
         }
     }
     
