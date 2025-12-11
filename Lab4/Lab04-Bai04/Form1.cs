@@ -283,7 +283,7 @@ public partial class Form1 : Form
             b.BackColor = SystemColors.Control;
 
             var seat = b.Name.Replace("btn", "");
-            if (IsSeatBooked(currentMovie.Name, seat))
+            if (IsSeatBooked(currentMovie.Url, seat))
                 b.BackColor = Color.Gray;
         }
 
@@ -302,7 +302,7 @@ public partial class Form1 : Form
         var seat = b.Name.Replace("btn", "");
 
         // ghế đã đặt rồi thì không chọn được
-        if (IsSeatBooked(currentMovie.Name, seat))
+        if (IsSeatBooked(currentMovie.Url, seat))
         {
             MessageBox.Show("Ghế này đã được đặt trước!");
             return;
@@ -370,10 +370,10 @@ public partial class Form1 : Form
         }
 
         // lưu ghế vào file json
-        if (!bookedSeats.ContainsKey(currentMovie.Name))
-            bookedSeats[currentMovie.Name] = new List<string>();
+        if (!bookedSeats.ContainsKey(currentMovie.Url))
+            bookedSeats[currentMovie.Url] = new List<string>();
 
-        bookedSeats[currentMovie.Name].AddRange(selectedSeats);
+        bookedSeats[currentMovie.Url].AddRange(selectedSeats);
         SaveBookings();
 
         var msg =
@@ -385,6 +385,7 @@ public partial class Form1 : Form
             $"{label8.Text}";
 
         MessageBox.Show(msg, "ĐẶT VÉ THÀNH CÔNG");
+        ResetSeatUI();
     }
 
     public class Movie
